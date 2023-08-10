@@ -1,0 +1,134 @@
+openapi: 3.0.3
+info:
+  title: Diddo API - Product Recognition in Videos
+  description: |
+    Diddo API represents the forefront of computer vision technology, specializing in the identification and recognition of products within videos and photo media.
+    
+    Tailored to enhance the viewer experience, this innovative solution enables seamless shopping of apparel and accessories featured in popular shows and movies.
+    
+    Through the api endpoints, clients can effortlessly send video details and retrieve a curated list of products showcased within the media, opening a new frontier in interactive entertainment and e-commerce.
+  version: 1.0.0
+  contact:
+    email: pamela@shopdiddo.com
+servers:
+  - url: https://api.shopdiddo.com/v1/
+tags:
+  - name: video
+    description: Endpoints related to videos and products within them
+
+paths:
+  /video/platform/{platform-id}:
+    get:
+      tags:
+        - video
+      description: Retrieves all media for a platform
+      parameters:
+        - name: platform-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VideoEntry'
+        500:
+          description: Error fetching data
+  /video/{media-id}:
+    get:
+      tags:
+        - video
+      description: Retrieves a single media by ID
+      parameters:
+        - name: media-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoEntry'
+        404:
+          description: Media not found
+        400:
+          description: Invalid ID
+  /video/slug/{slug}:
+    get:
+      tags:
+        - video
+      description: Retrieves a single media by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoEntry'
+        404:
+          description: Media not found
+
+components:
+  schemas:
+    VideoEntry:
+      type: object
+      properties:
+        Media:
+          type: object
+          properties:
+            MediaSlug:
+              type: string
+            Platform:
+              type: string
+            Type:
+              type: string
+            Title:
+              type: string
+            Season:
+              type: integer
+            Episode:
+              type: integer
+        Products:
+          type: array
+          items:
+            type: object
+            properties:
+              Article:
+                type: string
+              Brand:
+                type: string
+              URL:
+                type: string
+              Price:
+                type: number
+              Currency:
+                type: string
+              ImageLink:
+                type: string
+              TimeFrames:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    Start:
+                      type: integer
+                    End:
+                      type: integer
+        TimeStart:
+          type: integer
+        TimeEnd:
+          type: integer

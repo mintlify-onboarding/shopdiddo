@@ -1,0 +1,54 @@
+{
+    "$schema": "https://mintlify.com/schema.json",
+    "name": "Shopdiddo",
+    "logo": {
+      "light": "/logo/light.png",
+      "dark": "/logo/dark.png"
+    },
+    "api": {
+        "baseUrl": "https://api.shopdiddo.com/v1"
+      },
+    "favicon": "/favicon.png",
+    "colors": {
+      "primary": "#6E2ED8",
+      "light": "#8F51F5",
+      "dark": "#6E2ED8",
+      "anchors": {
+        "from": "#c71d71",
+        "to": "#6E2ED8"
+      }
+    },
+    "topbarCtaButton": {
+      "name": "Book Demo",
+      "url": "mailto:rishi@shopdiddo.com"
+    },
+    "topbarLinks": [
+      {
+        "name": "Partnerships",
+        "url": "https://www.shopdiddo.com/#partner-section"
+      }
+    ],
+    "anchors": [
+      {
+        "name": "Blog",
+        "icon": "newspaper",
+        "url": "https://www.shopdiddo.com/#careers-section"
+      }
+    ],
+    "navigation": [
+      {
+        "group": "API Reference",
+        "pages": [
+            "api-reference/video/get-video",
+            "api-reference/video/get-videoplatform",
+            "api-reference/video/get-videoslug"
+        ]
+      }
+    ],
+    "footerSocials":
+      {
+          "twitter": "https://twitter.com/ShopDiddo",
+          "linkedin": "https://www.linkedin.com/company/shopdiddo",
+          "instagram": "https://www.instagram.com/shopdiddo/"
+      }
+  }
