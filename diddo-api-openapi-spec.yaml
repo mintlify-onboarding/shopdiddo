@@ -1,27 +1,29 @@
 openapi: 3.0.3
 info:
-  title: Diddo API - Product Recognition in Videos
+  title: Diddo API - Product Recognition in Entertainment Media
   description: |
     Diddo API represents the forefront of computer vision technology, specializing in the identification and recognition of products within videos and photo media.
-    
+
     Tailored to enhance the viewer experience, this innovative solution enables seamless shopping of apparel and accessories featured in popular shows and movies.
-    
+
     Through the api endpoints, clients can effortlessly send video details and retrieve a curated list of products showcased within the media, opening a new frontier in interactive entertainment and e-commerce.
   version: 1.0.0
   contact:
     email: pamela@shopdiddo.com
 servers:
-  - url: https://api.shopdiddo.com/v1/
+  - url: https://api.shopdiddo.com:8080/
 tags:
   - name: video
     description: Endpoints related to videos and products within them
+  - name: image
+    description: Endpoints related to images and products within them
 
 paths:
   /video/platform/{platform-id}:
     get:
       tags:
         - video
-      description: Retrieves all media for a platform
+      description: Retrieves all media for a platform.
       parameters:
         - name: platform-id
           in: path
@@ -36,9 +38,17 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/VideoEntry'
+                  type: object
+                  properties:
+                    VideoInfo:
+                      $ref: '#/components/schemas/VideoInfo'
+                    TimeStart: { type: integer }
+                    TimeEnd: { type: integer }
+        404:
+          description: Platform not found
         500:
           description: Error fetching data
+
   /video/{media-id}:
     get:
       tags:
@@ -56,11 +66,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VideoEntry'
+                type: object
+                properties:
+                  VideoInfo:
+                    $ref: '#/components/schemas/VideoInfo'
+                  Products:
+                    type: array
+                    items:
+                      allOf:
+                        -
+                          $ref: '#/components/schemas/Product'
+                  TimeStart: { type: integer }
+                  TimeEnd: { type: integer }
         404:
-          description: Media not found
-        400:
-          description: Invalid ID
+          description: Video data not found
+        500:
+          description: Error fetching data
+
   /video/slug/{slug}:
     get:
       tags:
@@ -78,57 +100,342 @@ paths:
           content:
             application/json:
               schema:
+                type: object
+                properties:
+                  VideoInfo:
+                    $ref: '#/components/schemas/VideoInfo'
+                  Products:
+                    type: array
+                    items:
+                      allOf:
+                        -
+                          $ref: '#/components/schemas/Product'
+                  TimeStart: { type: integer }
+                  TimeEnd: { type: integer }
+        404:
+          description: Video data not found
+        500:
+          description: Error fetching data
+
+  /video/comparables/{media-id}:
+    get:
+      tags:
+        - video
+      description: Retrieve products and similar products based on media ID
+      parameters:
+        - name: media-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+
                 $ref: '#/components/schemas/VideoEntry'
         404:
-          description: Media not found
+          description: Video products not found
+        500:
+          description: Error fetching data
 
-components:
-  schemas:
-    VideoEntry:
-      type: object
-      properties:
-        Media:
-          type: object
-          properties:
-            MediaSlug:
-              type: string
-            Platform:
-              type: string
-            Type:
-              type: string
-            Title:
-              type: string
-            Season:
-              type: integer
-            Episode:
-              type: integer
-        Products:
-          type: array
-          items:
-            type: object
-            properties:
-              Article:
-                type: string
-              Brand:
-                type: string
-              URL:
-                type: string
-              Price:
-                type: number
-              Currency:
-                type: string
-              ImageLink:
-                type: string
-              TimeFrames:
+  /video/comparables/slug/{slug}:
+    get:
+      tags:
+        - video
+      description: Get exact products and comparables for a media by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+
+                $ref: '#/components/schemas/VideoEntry'
+        404:
+          description: Video products not found
+        500:
+          description: Error fetching data
+
+  /image/platform/{platform-id}:
+    get:
+      tags:
+        - image
+      description: Retrieves all media for a platform.
+      parameters:
+        - name: platform-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
                 type: array
                 items:
                   type: object
                   properties:
-                    Start:
-                      type: integer
-                    End:
-                      type: integer
-        TimeStart:
+                    imageinfo:
+                      $ref: '#/components/schemas/ImageEntry/properties/imageinfo'
+                    options:
+                      $ref: '#/components/schemas/ImageEntry/properties/options'
+        404:
+          description: Platform not found
+        500:
+          description: Error fetching data
+
+  /image/{media-id}:
+    get:
+      tags:
+        - image
+      description: Retrieves a single media by ID
+      parameters:
+        - name: media-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  imageinfo:
+                    $ref: '#/components/schemas/ImageEntry/properties/imageinfo'
+                  options:
+                    $ref: '#/components/schemas/ImageEntry/properties/options'
+                  products:
+                    type: array
+                    items:
+                      allOf:
+                        -
+                          $ref: '#/components/schemas/Product'
+        404:
+          description: Image data not found
+        500:
+          description: Error fetching data
+
+  /image/slug/{slug}:
+    get:
+      tags:
+        - image
+      description: Retrieves a single media by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  imageinfo:
+                    $ref: '#/components/schemas/ImageEntry/properties/imageinfo'
+                  options:
+                    $ref: '#/components/schemas/ImageEntry/properties/options'
+                  products:
+                    type: array
+                    items:
+                      allOf:
+                        -
+                          $ref: '#/components/schemas/Product'
+
+        404:
+          description: Image data not found
+        500:
+          description: Error fetching data
+
+  /image/comparables/{media-id}:
+    get:
+      tags:
+        - image
+      description: Retrieve products and similar products based on media ID
+      parameters:
+        - name: media-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+
+                $ref: '#/components/schemas/ImageEntry'
+        404:
+          description: Image products not found
+        500:
+          description: Error fetching data
+
+  /image/comparables/slug/{slug}:
+    get:
+      tags:
+        - image
+      description: Get exact products and comparables for a media by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+
+                $ref: '#/components/schemas/ImageEntry'
+        404:
+          description: Image products not found
+        500:
+          description: Error fetching data
+
+components:
+  schemas:
+    VideoInfo:
+      type: object
+      properties:
+        videoslug:
+          type: string
+        platform:
+          type: string
+        type:
+          type: string
+        title:
+          type: string
+        season:
           type: integer
-        TimeEnd:
+        episode:
           type: integer
+
+    ImageInfo:
+      type: object
+      properties:
+        imageslug:
+          type: string
+        imageid:
+          type: string
+        platform:
+          type: string
+
+    Options:
+      type: object
+      properties:
+        person:
+          type: string
+        category:
+          type: string
+
+    VideoEntry:
+      type: object
+      properties:
+        videoinfo:
+          $ref: '#/components/schemas/VideoInfo'
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductWithSimilar'
+        timestart:
+          type: integer
+        timeend:
+          type: integer
+
+    ImageEntry:
+      type: object
+      properties:
+        imageinfo:
+          $ref: '#/components/schemas/ImageInfo'
+        options:
+          $ref: '#/components/schemas/Options'
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductWithSimilar'
+
+    Product:
+      type: object
+      properties:
+        articleID:
+          type: object
+          properties:
+            $_id:
+              type: string
+        article:
+          type: string
+        brand:
+          type: string
+        url:
+          type: string
+        price:
+          type: integer
+        currency:
+          type: string
+        category:
+          type: string
+        imagelink:
+          type: string
+        timeframes:
+          type: array
+          items:
+            type: object
+            properties:
+              start:
+                type: integer
+              end:
+                type: integer
+
+    ProductWithSimilar:
+      allOf:
+        - $ref: '#/components/schemas/Product'
+        - properties:
+            similarproducts:
+              type: array
+              items:
+                $ref: '#/components/schemas/SimilarProduct'
+
+    SimilarProduct:
+      type: object
+      properties:
+        articleID:
+          type: object
+          properties:
+            $_id:
+              type: string
+        article:
+          type: string
+        brand:
+          type: string
+        url:
+          type: string
+        price:
+          type: integer
+        currency:
+          type: string
+        pricetier:
+          type: string
+        category:
+          type: string
+        imagelink:
+          type: string
