@@ -43,20 +43,22 @@
             "group": "Image",
             "pages": [
               "api-reference/image/get-image",
-              "api-reference/image/get-imagecomparables",
+              "api-reference/image/get-imageslug",                          
+              "api-reference/image/get-imagecomparables",              
               "api-reference/image/get-imagecomparablesslug",
-              "api-reference/image/get-imageplatform",
-              "api-reference/image/get-imageslug"
+              "api-reference/image/get-imageplatform"
+
             ]
           },
           {
             "group": "Video",
             "pages": [
               "api-reference/video/get-video",
+              "api-reference/video/get-videoslug",              
               "api-reference/video/get-videocomparables",
               "api-reference/video/get-videocomparablesslug",
-              "api-reference/video/get-videoplatform",
-              "api-reference/video/get-videoslug"
+              "api-reference/video/get-videoplatform"
+
             ]
           }
         ]
